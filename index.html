@@ -1,29 +1,43 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ShareApp</title>
-<link rel="manifest" href="/manifest.json">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ShareApp</title>
+
+  <!-- manifest dùng đường dẫn tương đối -->
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    body { font-family: sans-serif; padding: 10px; }
+    textarea { width: 100%; height: 200px; }
+    button { padding: 10px 20px; margin-top: 10px; }
+  </style>
 </head>
 <body>
-<h3>Văn bản đã nhận:</h3>
-<textarea id="t" style="width:100%;height:200px"></textarea>
-<button onclick="copy()">Copy</button>
 
+  <h3>Văn bản đã nhận từ Share:</h3>
+  <textarea id="t"></textarea>
+  <button onclick="copy()">Copy</button>
 
 <script>
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js')
+/* ===== Đăng ký service worker ===== */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(console.error);
+}
 
-
+/* ===== Nhận dữ liệu gửi từ share target ===== */
 navigator.serviceWorker.addEventListener('message', e => {
-if (e.data?.text) document.getElementById('t').value = e.data.text
-})
+  if (e.data?.text) {
+    document.getElementById('t').value = e.data.text;
+  }
+});
 
-
-function copy(){
-navigator.clipboard.writeText(document.getElementById('t').value)
+/* ===== Copy vào clipboard ===== */
+function copy() {
+  navigator.clipboard.writeText(document.getElementById('t').value);
 }
 </script>
+
 </body>
 </html>
