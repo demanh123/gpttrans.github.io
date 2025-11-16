@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="manifest" href="manifest.json" />
+  <title>Dịch bằng GPT (Groq)</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+      background: #111;
+      color: #eee;
+    }
+    h2 {
+      margin-bottom: 10px;
+    }
+    textarea {
+      width: 100%;
+      height: 140px;
+      background: #1a1a1a;
+      color: #eee;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 16px;
+      outline: none;
+    }
+    button {
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px;
+      background: #10a37f;
+      border: none;
+      color: white;
+      font-size: 17px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:active {
+      opacity: 0.8;
+    }
+    pre {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      background: #1a1a1a;
+      padding: 12px;
+      border-radius: 8px;
+      min-height: 80px;
+      border: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Dịch bằng GPT (Groq)</h2>
+
+<textarea id="input" placeholder="Nhập hoặc chia sẻ văn bản vào đây..."></textarea>
+<button onclick="translateText()">Dịch</button>
+
+<pre id="output"></pre>
+
+<script>
+async function translateText() {
+  const text = document.getElementById("input").value.trim();
+  if (!text) return alert("Bạn chưa nhập nội dung!");
+
+  document.getElementById("output").textContent = "⏳ Đang dịch...";
+
+  const API_KEY = "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";  // ← DÁN KEY Ở ĐÂY
+
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + API_KEY
+    },
+    body: JSON.stringify({
+      model: "llama3-8b-8192",   // model miễn phí & nhanh
+      messages: [
+        { role: "user", content: "Dịch sang tiếng Việt:\n" + text }
+      ]
+    })
+  });
+
+  const data = await res.json();
+  document.getElementById("output").textContent =
+    data?.choices?.[0]?.message?.content || "Lỗi dịch!";
+}
+
+// Nhận text từ Share Menu
+const params = new URLSearchParams(location.search);
+if (params.get("text")) {
+  document.getElementById("input").value = params.get("text");
+}
+
+// Đăng ký service worker
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+</body>
+</html>
