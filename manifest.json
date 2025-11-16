@@ -1,6 +1,6 @@
 {
-  "name": "Dịch bằng GPT (Groq)",
-  "short_name": "Dịch GPT",
+  "name": "Dịch bằng Gemini",
+  "short_name": "Dịch Gemini",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#111111",
