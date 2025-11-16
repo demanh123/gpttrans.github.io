@@ -6,7 +6,7 @@
   <title>ShareApp</title>
 
   <!-- manifest dùng đường dẫn tương đối -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/manifest.json">
 
   <style>
     body { font-family: sans-serif; padding: 10px; }
@@ -23,7 +23,7 @@
 <script>
 /* ===== Đăng ký service worker ===== */
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(console.error);
+  navigator.serviceWorker.register('/sw.js').catch(console.error);
 }
 
 /* ===== Nhận dữ liệu gửi từ share target ===== */
@@ -41,3 +41,4 @@ function copy() {
 
 </body>
 </html>
+
