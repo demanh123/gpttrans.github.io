@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="manifest" href="manifest.json" />
-  <title>Dịch bằng GPT (Groq)</title>
+  <title>Dịch bằng Gemini</title>
   <style>
     body {
       margin: 0;
@@ -54,7 +54,7 @@
 </head>
 <body>
 
-<h2>Dịch bằng GPT (Groq)</h2>
+<h2>Dịch bằng Gemini</h2>
 
 <textarea id="input" placeholder="Nhập hoặc chia sẻ văn bản vào đây..."></textarea>
 <button onclick="translateText()">Dịch</button>
@@ -68,25 +68,38 @@ async function translateText() {
 
   document.getElementById("output").textContent = "⏳ Đang dịch...";
 
-  const API_KEY = "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";  // ← DÁN KEY Ở ĐÂY
+  const API_KEY = "AIzaSyATtQBNy_Z-0CjVVnMTG2AQJHAWTh94Hog"; // ← Dán API Gemini ở đây
 
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + API_KEY
-    },
-    body: JSON.stringify({
-      model: "llama-3.1-8b-instant",   // model miễn phí & nhanh
-      messages: [
-        { role: "user", content: "Dịch sang tiếng Việt:\n" + text }
-      ]
-    })
-  });
+  try {
+    const res = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": API_KEY
+        },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                { text: "Dịch sang tiếng Việt:\n" + text }
+              ]
+            }
+          ]
+        })
+      }
+    );
 
-  const data = await res.json();
-  document.getElementById("output").textContent =
-    data?.choices?.[0]?.message?.content || "Lỗi dịch!";
+    const data = await res.json();
+    const translated =
+      data?.candidates?.[0]?.content || "Lỗi dịch!";
+    document.getElementById("output").textContent = translated;
+
+  } catch (err) {
+    document.getElementById("output").textContent = "Lỗi kết nối hoặc API!";
+    console.error(err);
+  }
 }
 
 // Nhận text từ Share Menu
@@ -103,4 +116,3 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
-
