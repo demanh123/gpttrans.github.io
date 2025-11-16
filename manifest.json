@@ -1,28 +1,14 @@
 {
-  "name": "Dịch bằng Gemini",
-  "short_name": "Dịch Gemini",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#111111",
-  "theme_color": "#10a37f",
-  "icons": [
-    {
-      "src": "icon.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "icon.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "share_target": {
-    "action": "/",
-    "method": "GET",
-    "params": {
-      "title": "title",
-      "text": "text"
-    }
-  }
+"name": "ShareApp",
+"short_name": "ShareApp",
+"start_url": "/",
+"display": "standalone",
+"share_target": {
+"action": "/share",
+"method": "POST",
+"enctype": "application/x-www-form-urlencoded",
+"params": {
+"text": "text"
+}
+}
 }
