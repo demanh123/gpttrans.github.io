@@ -1,62 +1,29 @@
-<!DOCTYPE html>
-<html lang="vi">
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Dịch Từ với Gemini API</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        input, button, textarea { margin: 10px 0; width: 100%; }
-        textarea { height: 100px; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ShareApp</title>
+<link rel="manifest" href="/manifest.json">
 </head>
 <body>
-    <h1>Dịch từ sang Tiếng Việt</h1>
-    <input type="text" id="wordInput" placeholder="Nhập từ tiếng Anh..." />
-    <button id="translateBtn">Dịch</button>
-    <textarea id="output" placeholder="Kết quả sẽ hiện ở đây..." readonly></textarea>
+<h3>Văn bản đã nhận:</h3>
+<textarea id="t" style="width:100%;height:200px"></textarea>
+<button onclick="copy()">Copy</button>
 
-    <script>
-        const apiKey = "AIzaSyATtQBNy_Z-0CjVVnMTG2AQJHAWTh94Hog"; // Thay bằng API key thật
-        const modelURL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
-        document.getElementById("translateBtn").addEventListener("click", async () => {
-            const word = document.getElementById("wordInput").value.trim();
-            if (!word) {
-                alert("Vui lòng nhập một từ!");
-                return;
-            }
+<script>
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js')
 
-            const prompt = `Dịch từ ${word} sang tiếng Việt`;
 
-            try {
-                const response = await fetch(modelURL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "x-goog-api-key": apiKey
-                    },
-                    body: JSON.stringify({
-                        contents: [
-                            { parts: [{ text: prompt }] }
-                        ]
-                    })
-                });
+navigator.serviceWorker.addEventListener('message', e => {
+if (e.data?.text) document.getElementById('t').value = e.data.text
+})
 
-                const data = await response.json();
 
-                // Kiểm tra cấu trúc trả về
-                let translatedText = "";
-                if (data.candidates && data.candidates.length > 0) {
-                    translatedText = data.candidates[0].content[0].text || "";
-                }
-
-                document.getElementById("output").value = translatedText;
-
-            } catch (error) {
-                console.error(error);
-                alert("Đã có lỗi xảy ra. Kiểm tra console để biết chi tiết.");
-            }
-        });
-    </script>
+function copy(){
+navigator.clipboard.writeText(document.getElementById('t').value)
+}
+</script>
 </body>
 </html>
