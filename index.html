@@ -1,52 +1,62 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Test API Gemini</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    textarea { width: 100%; height: 100px; margin-bottom: 10px; }
-    button { padding: 10px 20px; }
-    #result { margin-top: 20px; white-space: pre-wrap; background: #f0f0f0; padding: 10px; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Dịch Từ với Gemini API</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        input, button, textarea { margin: 10px 0; width: 100%; }
+        textarea { height: 100px; }
+    </style>
 </head>
 <body>
-  <h1>Test API Gemini</h1>
-  <textarea id="inputText" placeholder="Nhập nội dung ở đây...">Dịch từ sway</textarea><br>
-  <button id="sendBtn">Gửi</button>
+    <h1>Dịch từ sang Tiếng Việt</h1>
+    <input type="text" id="wordInput" placeholder="Nhập từ tiếng Anh..." />
+    <button id="translateBtn">Dịch</button>
+    <textarea id="output" placeholder="Kết quả sẽ hiện ở đây..." readonly></textarea>
 
-  <div id="result"></div>
+    <script>
+        const apiKey = "AIzaSyATtQBNy_Z-0CjVVnMTG2AQJHAWTh94Hog"; // Thay bằng API key thật
+        const modelURL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
-  <script>
-    const apiKey = "AIzaSyATtQBNy_Z-0CjVVnMTG2AQJHAWTh94Hog"; // Thay bằng key của bạn
-    const endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+        document.getElementById("translateBtn").addEventListener("click", async () => {
+            const word = document.getElementById("wordInput").value.trim();
+            if (!word) {
+                alert("Vui lòng nhập một từ!");
+                return;
+            }
 
-    document.getElementById("sendBtn").addEventListener("click", async () => {
-      const inputText = document.getElementById("inputText").value;
-      const payload = {
-        contents: [
-          { parts: [{ text: inputText }] }
-        ]
-      };
+            const prompt = `Dịch từ ${word} sang tiếng Việt`;
 
-      try {
-        const response = await fetch(endpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": apiKey
-          },
-          body: JSON.stringify(payload)
+            try {
+                const response = await fetch(modelURL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-goog-api-key": apiKey
+                    },
+                    body: JSON.stringify({
+                        contents: [
+                            { parts: [{ text: prompt }] }
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+
+                // Kiểm tra cấu trúc trả về
+                let translatedText = "";
+                if (data.candidates && data.candidates.length > 0) {
+                    translatedText = data.candidates[0].content[0].text || "";
+                }
+
+                document.getElementById("output").value = translatedText;
+
+            } catch (error) {
+                console.error(error);
+                alert("Đã có lỗi xảy ra. Kiểm tra console để biết chi tiết.");
+            }
         });
-
-        if (!response.ok) throw new Error("HTTP error " + response.status);
-
-        const data = await response.json();
-        document.getElementById("result").textContent = JSON.stringify(data, null, 2);
-      } catch (err) {
-        document.getElementById("result").textContent = "Lỗi: " + err;
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
